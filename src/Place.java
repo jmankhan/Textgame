@@ -42,6 +42,15 @@ public class Place extends GameObject {
 		this.containedItems=builder.containedItems;
 	}
 
+	/**
+	 * Checks if the user is allowed to enter
+	 * @return true if user can enter, false if they cannot
+	 */
+	public boolean canEnter() {
+	
+		return false;
+	}
+	
 	public Coordinate getCoords() {
 		return coords;
 	}
@@ -89,7 +98,7 @@ public class Place extends GameObject {
 		
 		/**
 		 * Begin creating a Place object. Name, description, and Coordinate are required. Item lists may be added
-		 * if desired but will be instantiated to empty lists
+		 * if desired but will be instantiated to empty lists if not specified otherwise
 		 * @param name String name of this place
 		 * @param description String description of this place
 		 * @param coord Coordinate loction of this place
