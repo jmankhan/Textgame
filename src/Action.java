@@ -11,14 +11,14 @@ public class Action extends GameObject {
 	};
 
 	private ActionType type;
-
+	
 	public Action(String name, String description, ActionType type) {
 		super(name, description);
 		this.type = type;
 	}
 
 	public ActionType getType() {
-		return type;
+		return this.type;
 	}
 
 	public void setType(ActionType type) {

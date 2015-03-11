@@ -1,17 +1,9 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 
 public class Game {
 
-	/**
-	 * Max Coordinate values for this map
-	 */
-	private int width, //max x
-				length,//max y 
-				height;//max z
-	
 	/**
 	 * Takes user input from console
 	 */
@@ -51,13 +43,9 @@ public class Game {
 		
 		currentLocation = new Coordinate(0,0,0);
 		
-		width = GameUtilities.findMaxX(GameUtilities.getCoords(this.map));
-		length= GameUtilities.findMaxY(GameUtilities.getCoords(this.map));
-		height= GameUtilities.findMaxZ(GameUtilities.getCoords(this.map));
-
 		this.inGame		= true;
 		this.in			= new Scanner(System.in);
-		this.inventory	= new ArrayList<Item>();
+		inventory	= new ArrayList<Item>();
 		
 		play();
 	}
@@ -71,9 +59,11 @@ public class Game {
 		display("Welcome to Muhlenberg Simulator 2015!");
 		
 		while(this.inGame) {
-			//display Place name + description
+			//display Place name + description + items found
 			Place currentPlace = GameUtilities.findPlace(map, currentLocation); 
-			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription());
+			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription() + ". You see a ");
+			for(Item i:currentPlace.getContainedItems())
+				display(i.getName() + ", " + i.getDescription());
 			
 			//prompt the user for input
 			display("What would you like to do?");
@@ -146,7 +136,7 @@ public class Game {
 		Action.ActionType type = Action.ActionType.INVALID;
 		
 		for(Action.ActionType a : Action.ActionType.values()) {
-			if(a.name().equalsIgnoreCase(keyword)) {
+			if(a.toString().equalsIgnoreCase(keyword)) {
 				type = a;
 			}
 		}
@@ -161,7 +151,8 @@ public class Game {
 	public void handleAction(Action action) {
 		switch(action.getType()) {
 		case MOVE:	currentLocation = doMove(action);		break;
-		
+		case PICK:  doPickup(action);						break;
+		case DROP:	doDrop(action);							break;
 		
 		default: //do nothing
 			break;
@@ -190,14 +181,12 @@ public class Game {
 	}
 	
 	/**
-	 * Checks if the desired location is within the bounds of the map and if the player fills the requirements to move there
+	 * Checks if the desired location can be found in the map and if the play is allowed to enter
 	 * @param desired
 	 * @return true if can move there
 	 */
 	public boolean isValidCoordinate(Coordinate desired) {
-		if(desired.getX() >= 0 && desired.getX() <= width
-				&& desired.getY() >= 0 && desired.getY() <= length
-				&& desired.getZ() >= -1 && desired.getZ() <= height)
+		if(GameUtilities.findPlace(map, desired) != null && GameUtilities.findPlace(map, desired).canEnter())
 			return true;
 		
 		return false;
@@ -214,6 +203,51 @@ public class Game {
 			return directionToCoordinate(currentLocation, direction);
 		}
 		return currentLocation;
+	}
+	
+	/**
+	 * Simulates picking up an item by adding it to the player's inventory and removing it from the Place's inventory
+	 * @param action
+	 */
+	public void doPickup(Action action) {
+		Item item = getItemByDescription(action);
+		
+		//add item to inventory and remove from Place found
+		if(item != null) {
+			inventory.add(item);
+			GameUtilities.findPlace(map, currentLocation).getContainedItems().remove(item);
+			display("Successfully picked up " + item.getName());
+		}
+
+	}
+	
+	/**
+	 * Simulates dropping an item by adding it to the Place's inventory and removing it from the player's inventory
+	 * @param action
+	 */
+	public void doDrop(Action action) {
+		Item item = getItemByDescription(action);
+		
+		//remove from player inventory and add to Place inventory
+		if(item != null) {
+			inventory.remove(item);
+			GameUtilities.findPlace(map, currentLocation).getContainedItems().add(item);
+			display("Successfully dropped " + item.getName());
+		}
+		
+	}
+	
+	public Item getItemByDescription(Action action) {
+		String itemName = action.getDescription();
+		Item item = null;
+		
+		for(Item i : GameUtilities.findPlace(map, currentLocation).getContainedItems()) {
+			if(i.getName().equalsIgnoreCase(itemName)) {
+				item = i;
+			}
+		}
+		
+		return item;
 	}
 	
 	/**
