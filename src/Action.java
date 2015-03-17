@@ -14,15 +14,19 @@ public class Action extends GameObject {
 	
 	public Action(String name, String description, ActionType type) {
 		super(name, description);
-		this.type = type;
+		this.type = setType(type);
 	}
 
 	public ActionType getType() {
 		return this.type;
 	}
 
-	public void setType(ActionType type) {
+	public ActionType setType(ActionType type) {
+		if(type == null)
+			type = ActionType.INVALID;
+		
 		this.type = type;
+		return type;
 	}
 
 	@Override

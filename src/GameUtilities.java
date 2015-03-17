@@ -16,12 +16,14 @@ public class GameUtilities {
 	 * @return true if the value is contained in the array, ignoring case
 	 */
 	public static boolean arrayContains(String value, String[] array) {
+		if(array == null || value == null)
+			return false;
+		
 		for(String s: array) {
 			if(s.equalsIgnoreCase(value)) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
@@ -53,7 +55,6 @@ public class GameUtilities {
 			if(p.getCoords().equals(coord))
 				return p;
 		}
-		
 		return null;
 	}
 }
