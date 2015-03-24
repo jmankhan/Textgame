@@ -1,7 +1,15 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
+/**
+ * Muhlenberg Text Adventure 2015 Game controller class. This will take input from the user, instantiate the game fields,
+ * react to user input, update values, and basically function as the main controller
+ * @author Jalal
+ * @version 3/16/2015
+ * Time expected: many hours
+ * Time actual: many hours
+ * Notes: GameTest has quite a few errors... I am still working on fixing them. Everything else should be fine though
+ */
 public class Game {
 
 	/**
@@ -43,7 +51,7 @@ public class Game {
 		
 		currentLocation = new Coordinate(0,0,0);
 		
-		this.inGame		= true;
+		this.inGame		= false;
 		this.in			= new Scanner(System.in);
 		inventory	= new ArrayList<Item>();
 		
@@ -61,7 +69,7 @@ public class Game {
 		while(this.inGame) {
 			//display Place name + description + items found
 			Place currentPlace = GameUtilities.findPlace(map, currentLocation); 
-			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription() + ". You see a ");
+			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription() + ".\nYou see a ");
 			for(Item i:currentPlace.getContainedItems())
 				display(i.getName() + ", " + i.getDescription());
 			
@@ -186,8 +194,11 @@ public class Game {
 	 * @return true if can move there
 	 */
 	public boolean isValidCoordinate(Coordinate desired) {
-		if(GameUtilities.findPlace(map, desired) != null && GameUtilities.findPlace(map, desired).canEnter())
-			return true;
+		if(GameUtilities.findPlace(map, desired) != null) {
+			if(GameUtilities.findPlace(map, desired).canEnter()) {
+				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -261,13 +272,12 @@ public class Game {
 		itemList1.add(new Item("Pencil", "Standard Writing utensil"));
 		itemList1.add(new Item("Pen", "Superior Writing Utensil"));
 		
-		map.add(new Place.PlaceBuilder("Moyer",		"Politics and Religion",new Coordinate(0,3,0)).build());
+		map.add(new Place.PlaceBuilder("Moyer",		"Politics and Religion",new Coordinate(0,3,0)).containedItems(itemList1).build());
 		map.add(new Place.PlaceBuilder("Ettinger",	"Liberal Arts", 		new Coordinate(0,2,0)).build());
 		map.add(new Place.PlaceBuilder("Haas",		"Administration", 		new Coordinate(0,1,0)).build());
-		map.add(new Place.PlaceBuilder("Trumbower", "Science", 				new Coordinate(0,0,0)).containedItems(itemList1).build());
-		
-		map.add(new Place.PlaceBuilder("Library",				"Resources", new Coordinate(1,3,0)).build());
-		map.add(new Place.PlaceBuilder("Center for the Arts",	"Fine Arts", new Coordinate(1,2,0)).build());
+		map.add(new Place.PlaceBuilder("Trumbower", "Science", 				new Coordinate(0,0,0)).build());
+		map.add(new Place.PlaceBuilder("Library",			   "Resources", new Coordinate(1,3,0)).build());
+		map.add(new Place.PlaceBuilder("Center for the Arts",  "Fine Arts", new Coordinate(1,2,0)).build());
 		
 		return map;
 	}
@@ -280,7 +290,17 @@ public class Game {
 		return inventory;
 	}
 	
+	/**
+	 * Sets whether the game will start instantly or not. Mostly for testing purposes
+	 * @param b
+	 */
+	public void setInGame(boolean b) {
+		this.inGame = b;
+	}
+	
 	public static void main(String args[]) {
 		new Game();
 	}
+	
+	
 }

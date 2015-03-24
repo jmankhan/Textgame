@@ -8,12 +8,10 @@ public class Coordinate {
 	private int x, y, z;
 
 	/**
-	 * Default constructor that will initialize axis values to negatives
+	 * Default constructor that will initialize axis values to -1,-1,-1 
 	 */
 	public Coordinate() {
-		x=-1;
-		y=-1;
-		z=-1;
+		this(-1,-1,-1);
 	}
 	
 	/**
@@ -23,10 +21,9 @@ public class Coordinate {
 	 * @param z
 	 */
 	public Coordinate(int x, int y, int z) {
-		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.x = setX(x);
+		this.y = setY(y);
+		this.z = setZ(z);
 	}
 
 	public int getX() {
@@ -41,16 +38,19 @@ public class Coordinate {
 		return z;
 	}
 
-	public void setX(int x) {
+	public int setX(int x) {
 		this.x = x;
+		return x;
 	}
 
-	public void setY(int y) {
+	public int setY(int y) {
 		this.y = y;
+		return y;
 	}
 
-	public void setZ(int z) {
+	public int setZ(int z) {
 		this.z = z;
+		return z;
 	}
 	
 	public void setDeltaX(int dx) {
