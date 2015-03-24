@@ -3,8 +3,7 @@
 /Coordinate.class
 /Game.class
 /GameObject.class
+/GameUtilities.class
 /Item.class
 /Place$PlaceBuilder.class
 /Place.class
-/Utility.class
-/GameUtilities.class

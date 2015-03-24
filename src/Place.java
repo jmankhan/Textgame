@@ -103,7 +103,9 @@ public class Place extends GameObject {
 		 * @param description String description of this place
 		 * @param coord Coordinate loction of this place
 		 */
-		public PlaceBuilder(String name, String description, Coordinate coord) {
+		public PlaceBuilder(String name, String description, Coordinate coord) throws IllegalArgumentException {
+			if(name == null || description == null || coord == null) {throw new IllegalArgumentException("null arguments not allowed");}
+			
 			this.name = name;
 			this.description = description;
 			this.coord = coord;
