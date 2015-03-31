@@ -21,9 +21,8 @@ public class Action extends GameObject {
 		return this.type;
 	}
 
-	public ActionType setType(ActionType type) {
-		if(type == null)
-			type = ActionType.INVALID;
+	public ActionType setType(ActionType type) throws IllegalArgumentException {
+		if(type == null) {throw new IllegalArgumentException("Type cannot be null. Use INVALID instead");}
 		
 		this.type = type;
 		return type;

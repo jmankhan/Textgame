@@ -16,10 +16,12 @@ public abstract class GameObject {
 	
 	/**
 	 * Creates a new GameObject with a String for its name and description. Most classes will use this functionality
-	 * @param name String of this GameObject's name
-	 * @param description String of this GameObject's description
+	 * @param name String of this GameObject's name, null not allowed
+	 * @param description String of this GameObject's description, null not allowed
 	 */
-	public GameObject(String name, String description) {
+	public GameObject(String name, String description) throws IllegalArgumentException {
+		if(name == null || description == null) {throw new IllegalArgumentException("null parameters not allowed");}
+		
 		this.name = setName(name);
 		this.description = description;
 	}
@@ -45,9 +47,8 @@ public abstract class GameObject {
 	 * @param name String name of this GameObject
 	 * @return 
 	 */
-	public String setName(String name) {
-		if(name == null)
-			name = "";
+	public String setName(String name) throws IllegalArgumentException {
+		if(name == null) {throw new IllegalArgumentException("Name cannot be null");}
 		
 		this.name = name;
 		return name;
@@ -57,7 +58,8 @@ public abstract class GameObject {
 	 * Sets this GameObject's description. Null is allowed
 	 * @param description
 	 */
-	public void setDescription(String description) {
+	public void setDescription(String description) throws IllegalArgumentException{
+		if(name == null) {throw new IllegalArgumentException("Description cannot be null");}
 		this.description = description;
 	}
 }

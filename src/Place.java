@@ -114,17 +114,20 @@ public class Place extends GameObject {
 			forbidItems = new ArrayList<Item>();
 		}
 		
-		public PlaceBuilder requiredItems(ArrayList<Item> reqItems) {
+		public PlaceBuilder requiredItems(ArrayList<Item> reqItems) throws IllegalArgumentException {
+			if(reqItems == null || reqItems.size() == 0) {throw new IllegalArgumentException("Required items cannot be null or empty. If no items are required, do not call this method");}
 			this.reqItems = reqItems;
 			return this;
 		}
 		
-		public PlaceBuilder forbiddenItems(ArrayList<Item> forbidItems) {
+		public PlaceBuilder forbiddenItems(ArrayList<Item> forbidItems) throws IllegalArgumentException {
+			if(forbidItems == null || forbidItems.size() == 0) {throw new IllegalArgumentException("Forbidden items cannot be null or empty. If no items are required, do not call this method");}
 			this.forbidItems = forbidItems;
 			return this;
 		}
 		
-		public PlaceBuilder containedItems(ArrayList<Item> containItems) {
+		public PlaceBuilder containedItems(ArrayList<Item> containItems) throws IllegalArgumentException {
+			if(containItems == null || containItems.size() == 0) {throw new IllegalArgumentException("Contained items cannot be null or empty. If no items are required, do not call this method");}
 			this.containedItems = containItems;
 			return this;
 		}
