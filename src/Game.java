@@ -35,7 +35,7 @@ public class Game {
 	/**
 	 * List of Items that player currently has
 	 */
-	private static ArrayList<Item> inventory;
+	private ArrayList<Item> inventory;
 
 	public Game() {
 		this(null);
@@ -133,8 +133,9 @@ public class Game {
 	 * @param values String that will be the name of the Action, still needs to be interpreted
 	 * @return
 	 */
-	public Action convertToAction(String keyword, String[] values) {
-
+	public Action convertToAction(String keyword, String[] values) throws IllegalArgumentException {
+		if(keyword == null || values == null) throw new IllegalArgumentException("Null values not allowed");
+		
 		String description = "";
 		for(String s:values)
 			if(s!=null)
@@ -221,7 +222,7 @@ public class Game {
 	 * @param action
 	 */
 	public void doPickup(Action action) {
-		Item item = getItemByDescription(action);
+		Item item = getItemByName(action);
 
 		//add item to inventory and remove from Place found
 		if(item != null) {
@@ -237,7 +238,7 @@ public class Game {
 	 * @param action
 	 */
 	public void doDrop(Action action) {
-		Item item = getItemByDescription(action);
+		Item item = getItemByName(action);
 
 		//remove from player inventory and add to Place inventory
 		if(item != null) {
@@ -248,7 +249,7 @@ public class Game {
 
 	}
 
-	public Item getItemByDescription(Action action) {
+	public Item getItemByName(Action action) {
 		String itemName = action.getDescription();
 		Item item = null;
 
@@ -270,13 +271,13 @@ public class Game {
 		
 		try {
 			ArrayList<Item> itemList1 = new ArrayList<Item>();
-			itemList1.add(new Item("Pencil", "Standard Writing utensil"));
+			itemList1.add(new Item("Pencil", "Standard Writing Utensil"));
 			itemList1.add(new Item("Pen", "Superior Writing Utensil"));
 
-			map.add(new Place.PlaceBuilder("Moyer",		"Politics and Religion",new Coordinate(0,3,0)).containedItems(itemList1).build());
+			map.add(new Place.PlaceBuilder("Moyer",		"Politics and Religion",new Coordinate(0,3,0)).build());
 			map.add(new Place.PlaceBuilder("Ettinger",	"Liberal Arts", 		new Coordinate(0,2,0)).build());
 			map.add(new Place.PlaceBuilder("Haas",		"Administration", 		new Coordinate(0,1,0)).build());
-			map.add(new Place.PlaceBuilder("Trumbower", "Science", 				new Coordinate(0,0,0)).build());
+			map.add(new Place.PlaceBuilder("Trumbower", "Science", 				new Coordinate(0,0,0)).containedItems(itemList1).build());
 			map.add(new Place.PlaceBuilder("Library",			   "Resources", new Coordinate(1,3,0)).build());
 			map.add(new Place.PlaceBuilder("Center for the Arts",  "Fine Arts", new Coordinate(1,2,0)).build());
 		} catch(IllegalArgumentException e) {}
@@ -291,6 +292,13 @@ public class Game {
 		return inventory;
 	}
 
+	/**
+	 * Set players inventory to completely new List. For testing only 
+	 * @param inv ArrayList<Item>
+	 */
+	public void setInventory(ArrayList<Item> inv) {
+		this.inventory = inv;
+	}
 	/**
 	 * Sets whether the game will start instantly or not. Mostly for testing purposes
 	 * @param b

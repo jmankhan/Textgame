@@ -33,5 +33,23 @@ public class ItemTest {
 		assertEquals("123YTRW\nb\n\n", item.getName());
 		assertEquals("!#$%(YGFJP@#", item.getDescription());
 	}
+	
+	@Test
+	public void testEquals() {
+		Item control = new Item("item", "desc");
+		Item test = new Item("item", "desc");
+		assertEquals(control, test);
+		
+		test.setName("not item");
+		assertNotEquals(control, test);
+		
+		control.setName("not item");
+		assertEquals(control, test);
+		
+		try {
+			test.setName(null);
+			assertNotEquals(control, test);
+		} catch(IllegalArgumentException e) {System.out.println(e.getMessage());}
+	}
 
 }

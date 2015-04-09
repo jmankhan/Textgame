@@ -32,29 +32,30 @@ public class GameUtilities {
 	}
 	
 	/**
-	 * Finds the Coordinate values for each Place and return them
+	 * Finds the Coordinate values for each Place and return them. Not yet used
 	 * @param map
 	 * @return Coordinate List of each Place on map
 	 */
-	public static ArrayList<Coordinate> getCoords(ArrayList<Place> map) {
-		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
-		for(Place p:map) {
-			coords.add(p.getCoords());
-		}
-		return coords;
-	}
+//	public static ArrayList<Coordinate> getCoords(ArrayList<Place> map) {
+//		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+//		for(Place p:map) {
+//			coords.add(p.getCoords());
+//		}
+//		return coords;
+//	}
 	
 	/**
-	 * Finds the desired Place by comparing the given coordinates to those in the map. If it is not found, null is returned
+	 * Finds the desired Place by comparing the given coordinates to those in the map. If it is not found, an exception is thrown
 	 * @param map
 	 * @param coord
 	 * @return Place within Coordinate, if not found, returns null
 	 */
-	public static Place findPlace(ArrayList<Place> map, Coordinate coord) {
+	public static Place findPlace(ArrayList<Place> map, Coordinate coord) throws IllegalArgumentException {
+		if(map == null || coord == null) throw new IllegalArgumentException("Null values not allowed");
 		for(Place p : map) {
 			if(p.getCoords().equals(coord))
 				return p;
 		}
-		return null;
+		throw new IllegalArgumentException("Place does not exist on map");
 	}
 }

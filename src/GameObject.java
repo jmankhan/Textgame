@@ -10,10 +10,6 @@ public abstract class GameObject {
 	 */
 	protected String name, description;
 	
-	protected GameObject() {
-		
-	}
-	
 	/**
 	 * Creates a new GameObject with a String for its name and description. Most classes will use this functionality
 	 * @param name String of this GameObject's name, null not allowed

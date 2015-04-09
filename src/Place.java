@@ -15,12 +15,6 @@ public class Place extends GameObject {
 	private ArrayList<Item> reqItems, forbidItems, containedItems;
 
 	/**
-	 * Empty constructor that will never be called but is needed to avoid abstract inheritance errors
-	 */
-	private Place() {
-	}
-	
-	/**
 	 * Private constructor inherited by GameObject
 	 * @param name Required String name
 	 * @param description Required String description
@@ -34,6 +28,8 @@ public class Place extends GameObject {
 	 * @param builder
 	 */
 	private Place(PlaceBuilder builder) {
+		super("", "");
+		
 		this.name = 		builder.name;
 		this.description = 	builder.description;
 		this.coords = 		builder.coord;
@@ -48,7 +44,7 @@ public class Place extends GameObject {
 	 */
 	public boolean canEnter() {
 	
-		return false;
+		return true;
 	}
 	
 	public Coordinate getCoords() {

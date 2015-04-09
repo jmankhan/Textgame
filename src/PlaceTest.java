@@ -23,21 +23,21 @@ public class PlaceTest {
 		ArrayList<Item> items = new ArrayList<Item>();
 		items.add(new Item("item", "desc"));
 		
-		Place control = new Place.PlaceBuilder("name", "desc", null).build();
-		Place test1 = new Place.PlaceBuilder("name", "desc", null).build();
+		Place control = new Place.PlaceBuilder("name", "desc", new Coordinate(0,0,0)).build();
+		Place test1 = new Place.PlaceBuilder("name", "desc", new Coordinate(0,0,0)).build();
 		Place test2 = new Place.PlaceBuilder("name1", "desc", new Coordinate(1,2,3)).build();
-		Place test3 = new Place.PlaceBuilder("name", "desc", null).containedItems(items).build();
-		Place test4 = new Place.PlaceBuilder("name", "desc", null).requiredItems(items).build();
-		Place test5 = new Place.PlaceBuilder("name", "desc", null).forbiddenItems(items).build();
+		Place test3 = new Place.PlaceBuilder("name", "desc", new Coordinate(0,1,2)).containedItems(items).build();
+		Place test4 = new Place.PlaceBuilder("name", "desc", new Coordinate(0,0,1)).requiredItems(items).build();
+		Place test5 = new Place.PlaceBuilder("name", "desc", new Coordinate(-1,-4,-6)).forbiddenItems(items).build();
 		Place[] tests = {test1, test3, test4, test5};
 
 		for(Place test : tests) {
 
 			assertEquals(control.getName(), 			test.getName());
 			assertEquals(control.getDescription(), 		test.getDescription());
-			assertEquals(control.getCoords(), 			test.getCoords());
-
 		}
+		
+		assertEquals(control.getCoords(), test1.getCoords());
 		
 		Assert.assertNotEquals(control.getCoords(), 			test2.getCoords());
 		Assert.assertNotEquals(control.getContainedItems(), 	test3.getContainedItems());
