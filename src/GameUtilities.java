@@ -9,6 +9,17 @@ public class GameUtilities {
 	public static final String[] upWords = {"up", "north"};
 	public static final String[] entryWords = {"enter", "go inside", "inside"};
 	
+	public static ArrayList<String> allMoveWords = new ArrayList<String>();
+	
+	public GameUtilities() {
+		for(int i=0; i<2; i++) {
+			allMoveWords.add(leftWords[i]);
+			allMoveWords.add(rightWords[i]);
+			allMoveWords.add(downWords[i]);
+			allMoveWords.add(upWords[i]);
+
+		}
+	}
 	/**
 	 * Checks if the given String is contained in the String array
 	 * @param value
@@ -30,19 +41,6 @@ public class GameUtilities {
 	public static Coordinate getEquivalentCoordinate(Coordinate coord) {
 		return new Coordinate(coord.getX(), coord.getY(), coord.getZ());
 	}
-	
-	/**
-	 * Finds the Coordinate values for each Place and return them. Not yet used
-	 * @param map
-	 * @return Coordinate List of each Place on map
-	 */
-//	public static ArrayList<Coordinate> getCoords(ArrayList<Place> map) {
-//		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
-//		for(Place p:map) {
-//			coords.add(p.getCoords());
-//		}
-//		return coords;
-//	}
 	
 	/**
 	 * Finds the desired Place by comparing the given coordinates to those in the map. If it is not found, an exception is thrown

@@ -118,5 +118,14 @@ public class GameUtilitiesTest {
 			Assert.assertNotEquals(p2, GameUtilities.findPlace(map, new Coordinate(-87681,367867,5471235-67)));
 		} catch(IllegalArgumentException e) {System.out.println(e.getMessage());}
 	}
+	
+	@Test
+	public void testAllMoveWords() {
+		new Game();
+		String[] words = {"left", "right", "down", "up", "west", "east", "south", "north"};
+		for(int i=0; i<GameUtilities.allMoveWords.size(); i++) {
+			assertEquals(words[i], GameUtilities.allMoveWords.get(i));
+		}
+	}
 }
 

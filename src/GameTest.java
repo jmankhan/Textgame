@@ -43,7 +43,6 @@ public class GameTest {
 
 		test2.getItemByName(new Action("pick", "pencil", Action.ActionType.PICK));		
 		assertEquals(control.isValidCoordinate(new Coordinate(0,0,0)), test2.isValidCoordinate(new Coordinate(0,0,0)));
-		Assert.assertNotEquals(control.isValidCoordinate(new Coordinate(0,1,0)), test2.isValidCoordinate(new Coordinate(0,5,0)));
 	}
 
 	@Test
@@ -113,5 +112,21 @@ public class GameTest {
 		
 		test.doPickup(new Action("pickup", "pencil", Action.ActionType.PICK));
 		assertEquals(test.getInventory().get(3), new Item("Pencil", "Standard Writing Utensil"));
+	}
+	
+	@Test
+	public void testAllWordsToActions() {
+		Game g = new Game();
+		ArrayList<String> stringlist = new ArrayList<String>();
+		stringlist.add("a string");
+		stringlist.add("");
+		stringlist.add(" ");
+		stringlist.add("!23");
+		stringlist.add("!@#$%kjkjk");
+
+		ArrayList<Action> toTest = g.generateActionFromStringList(stringlist, Action.ActionType.MOVE);
+		for(int i=0; i<stringlist.size(); i++) {
+			assertEquals(toTest.get(i), new Action("name", stringlist.get(i), Action.ActionType.MOVE));
+		}
 	}
 }

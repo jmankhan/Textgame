@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -11,6 +12,10 @@ import java.util.Scanner;
  * Notes: GameTest has quite a few errors... I am still working on fixing them. Everything else should be fine though
  */
 public class Game {
+
+	public static void main(String args[]) {
+		new Game();
+	}
 
 	/**
 	 * Takes user input from console
@@ -55,76 +60,20 @@ public class Game {
 		this.in			= new Scanner(System.in);
 		inventory		= new ArrayList<Item>();
 
+		new GameUtilities();
 		play();
 	}
 
 	/**
-	 * The main game loop. Will run until the inGame boolean return false. Can only be called by the Game constructor
+	 * Chooses a random Action from similarly typed Actions, so the move forward command could result in moving backwards
+	 * Apparently this adds something meaningful to the game
+	 * @param actionPool
+	 * @return
 	 */
-	private void play() {
-
-		//display intro
-		display("Welcome to Muhlenberg Simulator 2015!");
-
-		while(this.inGame) {
-			//display Place name + description + items found
-			Place currentPlace = GameUtilities.findPlace(map, currentLocation); 
-			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription() + ".\nYou see a ");
-			for(Item i:currentPlace.getContainedItems())
-				display(i.getName() + ", " + i.getDescription());
-
-			//prompt the user for input
-			display("What would you like to do?");
-
-			//get input
-			String input = this.getNextUserInput();
-
-			//parse the input
-			handleInput(input);
-		}
-	}
-
-	/**
-	 * Gets the next user command from console
-	 * @return String command
-	 */
-	public String getNextUserInput() {
-		return in.nextLine();
-	}
-
-	/**
-	 * Prints the parameter to console
-	 * @param output String to print
-	 * @return String that was printed
-	 */
-	public String display(String output) {
-		System.out.println(output);
-		return output;
-	}
-
-	/**
-	 * Parses the input and passes it to doAction(). 
-	 * Input structure is expected to be [keyword] [value1] [value2]...
-	 * [keyword] would be something like "move" or "drop"
-	 * [value] would be something like "west" or "item 1"
-	 * @param input String user input
-	 */
-	public void handleInput(String input) {
-		//splits the input by empty space into an array of individual words
-		String[] words = input.split(" ");
-
-		String keyword = words[0];
-		String[] values = new String[words.length];
-
-		if(words.length < 2 || keyword == null) {
-			display("Please type a noun after a verb");
-			return;
-		}
-
-		System.arraycopy(words, 1, values, 0, words.length-1);
-
-		Action userAction = convertToAction(keyword, values);
-		handleAction(userAction);
+	public Action chooseRandom(ArrayList<Action> actionPool) {
+		Random r = new Random();
+		int index = r.nextInt(actionPool.size());
+		return actionPool.get(index);
 	}
 
 	/**
@@ -154,21 +103,6 @@ public class Game {
 	}
 
 	/**
-	 * Responds to the given action by moving or interacting with items 
-	 * @param action user Action to respond to
-	 */
-	public void handleAction(Action action) {
-		switch(action.getType()) {
-		case MOVE:	currentLocation = doMove(action);		break;
-		case PICK:  doPickup(action);						break;
-		case DROP:	doDrop(action);							break;
-
-		default: //do nothing
-			break;
-		}
-	}
-
-	/**
 	 * Converts a given String to a Coordinate position relative to a given origin
 	 * @param origin Coordinate checking against, typically current player location
 	 * @param direction String direction given by player
@@ -190,18 +124,29 @@ public class Game {
 	}
 
 	/**
-	 * Checks if the desired location can be found in the map and if the play is allowed to enter
-	 * @param desired
-	 * @return true if can move there
+	 * Prints the parameter to console
+	 * @param output String to print
+	 * @return String that was printed
 	 */
-	public boolean isValidCoordinate(Coordinate desired) {
-		if(GameUtilities.findPlace(map, desired) != null) {
-			if(GameUtilities.findPlace(map, desired).canEnter()) {
-				return true;
-			}
+	public String display(String output) {
+		System.out.println(output);
+		return output;
+	}
+
+	/**
+	 * Simulates dropping an item by adding it to the Place's inventory and removing it from the player's inventory
+	 * @param action
+	 */
+	public void doDrop(Action action) {
+		Item item = getItemByName(action);
+
+		//remove from player inventory and add to Place inventory
+		if(item != null) {
+			inventory.remove(item);
+			GameUtilities.findPlace(map, currentLocation).getContainedItems().add(item);
+			display("Successfully dropped " + item.getName());
 		}
 
-		return false;
 	}
 
 	/**
@@ -234,35 +179,6 @@ public class Game {
 	}
 
 	/**
-	 * Simulates dropping an item by adding it to the Place's inventory and removing it from the player's inventory
-	 * @param action
-	 */
-	public void doDrop(Action action) {
-		Item item = getItemByName(action);
-
-		//remove from player inventory and add to Place inventory
-		if(item != null) {
-			inventory.remove(item);
-			GameUtilities.findPlace(map, currentLocation).getContainedItems().add(item);
-			display("Successfully dropped " + item.getName());
-		}
-
-	}
-
-	public Item getItemByName(Action action) {
-		String itemName = action.getDescription();
-		Item item = null;
-
-		for(Item i : GameUtilities.findPlace(map, currentLocation).getContainedItems()) {
-			if(i.getName().equalsIgnoreCase(itemName)) {
-				item = i;
-			}
-		}
-
-		return item;
-	}
-
-	/**
 	 * Generates a default map if the Game does not receive a map
 	 * @return ArrayList<Place> default map
 	 */
@@ -292,13 +208,110 @@ public class Game {
 		return inventory;
 	}
 
-	/**
-	 * Set players inventory to completely new List. For testing only 
-	 * @param inv ArrayList<Item>
-	 */
-	public void setInventory(ArrayList<Item> inv) {
-		this.inventory = inv;
+	public Item getItemByName(Action action) {
+		String itemName = action.getDescription();
+		Item item = null;
+
+		for(Item i : GameUtilities.findPlace(map, currentLocation).getContainedItems()) {
+			if(i.getName().equalsIgnoreCase(itemName)) {
+				item = i;
+			}
+		}
+
+		return item;
 	}
+
+	/**
+	 * Gets the next user command from console
+	 * @return String command
+	 */
+	public String getNextUserInput() {
+		return in.nextLine();
+	}
+
+	/**
+	 * Responds to the given action by moving or interacting with items 
+	 * @param action user Action to respond to
+	 */
+	public void handleAction(Action action) {
+		
+		switch(action.getType()) {
+		case MOVE:	currentLocation = doMove(this.chooseRandom
+					(this.generateActionFromStringList(GameUtilities.allMoveWords, 
+					Action.ActionType.MOVE)));				break; //deal with it
+		case PICK:  doPickup(action);						break;
+		case DROP:	doDrop(action);							break;
+
+		default: //do nothing
+			break;
+		}
+	}
+
+	/**
+	 * Parses the input and passes it to doAction(). 
+	 * Input structure is expected to be [keyword] [value1] [value2]...
+	 * [keyword] would be something like "move" or "drop"
+	 * [value] would be something like "west" or "item 1"
+	 * @param input String user input
+	 */
+	public void handleInput(String input) {
+		//splits the input by empty space into an array of individual words
+		String[] words = input.split(" ");
+
+		String keyword = words[0];
+		String[] values = new String[words.length];
+
+		if(words.length < 2 || keyword == null) {
+			display("Please type a noun after a verb");
+			return;
+		}
+
+		System.arraycopy(words, 1, values, 0, words.length-1);
+
+		Action userAction = convertToAction(keyword, values);
+		handleAction(userAction);
+	}
+
+	/**
+	 * Checks if the desired location can be found in the map and if the play is allowed to enter
+	 * @param desired
+	 * @return true if can move there
+	 */
+	public boolean isValidCoordinate(Coordinate desired) {
+		if(GameUtilities.findPlace(map, desired) != null) {
+			if(GameUtilities.findPlace(map, desired).canEnter()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	/**
+	 * The main game loop. Will run until the inGame boolean return false. Can only be called by the Game constructor
+	 */
+	private void play() {
+
+		//display intro
+		display("Welcome to Muhlenberg Simulator 2015!");
+
+		while(this.inGame) {
+			//display Place name + description + items found
+			Place currentPlace = GameUtilities.findPlace(map, currentLocation); 
+			display("You are currently in " + currentPlace.getName() + ". The sign says: " + currentPlace.getDescription() + ".\nYou see a ");
+			for(Item i:currentPlace.getContainedItems())
+				display(i.getName() + ", " + i.getDescription());
+
+			//prompt the user for input
+			display("What would you like to do?");
+
+			//get input
+			String input = this.getNextUserInput();
+
+			//parse the input
+			handleInput(input);
+		}
+	}
+	
 	/**
 	 * Sets whether the game will start instantly or not. Mostly for testing purposes
 	 * @param b
@@ -307,7 +320,19 @@ public class Game {
 		this.inGame = b;
 	}
 
-	public static void main(String args[]) {
-		new Game();
+	/**
+	 * Set players inventory to completely new List. For testing only 
+	 * @param inv ArrayList<Item>
+	 */
+	public void setInventory(ArrayList<Item> inv) {
+		this.inventory = inv;
+	}
+	
+	public ArrayList<Action> generateActionFromStringList(ArrayList<String> strings, Action.ActionType type) {
+		ArrayList<Action> actions = new ArrayList<Action>();
+		for(String s : strings) {
+			actions.add(new Action("name", s, type));
+		}
+		return actions;
 	}
 }
